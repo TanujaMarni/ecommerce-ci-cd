@@ -24,8 +24,15 @@ jobs:
           cd backend
           mvn -B clean verify
 
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.dckr_pat_YbEyEW013VzLeNIv7eNMwTNPsqw }}" | docker login -u "${{ secrets.tanujamarni }}" --password-stdin
+
       - name: Build Docker image
-        env:
-          DOCKER_BUILDKIT: 1
         run: |
-          docker build -t myrepo/ecommerce:${{ github.sha }} .
+          docker build -t ${{ secrets.tanujamarni }}/ecommerce:${{ github.sha }} .
+          docker tag ${{ secrets.tanujamarni }}/ecommerce:${{ github.sha }} ${{ secrets.tanujamarni }}/ecommerce:latest
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.tanujamarni }}/ecommerce:${{ github.sha }}
+          docker push ${{ secrets.tanujamarni }}/ecommerce:latest
