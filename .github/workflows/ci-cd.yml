@@ -33,6 +33,7 @@ jobs:
         with:
           username: ${{ secrets.tanujamarni}}
           password: ${{ secrets.dckr_pat_YbEyEW013VzLeNIv7eNMwTNPsqw}}
+          registry: docker.io
 
       # 5️⃣ Build Docker image
       - name: Build Docker image
