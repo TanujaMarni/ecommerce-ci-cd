@@ -1,0 +1,31 @@
+name: E-Commerce CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build and run tests
+        run: |
+          cd backend
+          mvn -B clean verify
+
+      - name: Build Docker image
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          docker build -t myrepo/ecommerce:${{ github.sha }} .

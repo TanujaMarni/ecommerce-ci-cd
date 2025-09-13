@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | E-commerce</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+          background-color: #f8f9fa;
+        }
+        .product-card img {
+          height: 200px;
+          object-fit: cover;
+          border-radius: 10px;
+        }
+        .product-card {
+          transition: transform 0.2s;
+        }
+        .product-card:hover {
+          transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">E-commerce 🚀</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+
+<!-- Search & Filter -->
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <input id="searchInput" type="text" class="form-control" placeholder="🔍 Search products...">
+        </div>
+        <div class="col-md-4">
+            <select id="categoryFilter" class="form-select">
+                <option value="">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Home">Home</option>
+                <option value="Sports">Sports</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button id="resetBtn" class="btn btn-secondary w-100">Reset</button>
+        </div>
+    </div>
+
+    <!-- Product Section -->
+    <div class="row g-4" id="productGrid">
+        <!-- Products will be injected here -->
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center p-3">
+    <p class="mb-0">&copy; 2025 E-commerce App | All Rights Reserved</p>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Fetch & Display Products -->
+<script>
+    let allProducts = [];
+
+    // Fetch products from backend API
+    fetch("/api/products")
+      .then(res => res.json())
+      .then(products => {
+        allProducts = products;
+        renderProducts(allProducts);
+      })
+      .catch(err => console.error("Error fetching products:", err));
+
+    // Render products
+    function renderProducts(products) {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = "";
+      if (products.length === 0) {
+        grid.innerHTML = `<p class="text-center text-muted">No products found.</p>`;
+        return;
+      }
+      products.forEach(p => {
+        grid.innerHTML += `
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card product-card shadow-sm">
+              <img src="${p.imageUrl || '/images/placeholder.jpg'}" class="card-img-top" alt="${p.name}">
+              <div class="card-body text-center">
+                <h5 class="card-title">${p.name}</h5>
+                <p class="card-text text-muted">${p.description}</p>
+                <p class="fw-bold">₹${p.price}</p>
+                <button class="btn btn-primary btn-sm">Add to Cart</button>
+                <button class="btn btn-success btn-sm">Buy Now</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Filter logic
+    document.getElementById("searchInput").addEventListener("input", filterProducts);
+    document.getElementById("categoryFilter").addEventListener("change", filterProducts);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("categoryFilter").value = "";
+      renderProducts(allProducts);
+    });
+
+    function filterProducts() {
+      const searchText = document.getElementById("searchInput").value.toLowerCase();
+      const category = document.getElementById("categoryFilter").value;
+
+      let filtered = allProducts.filter(p =>
+        p.name.toLowerCase().includes(searchText) &&
+        (category === "" || (p.category && p.category === category))
+      );
+
+      renderProducts(filtered);
+    }
+</script>
+</body>
+</html>
