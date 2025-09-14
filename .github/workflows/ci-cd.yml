@@ -31,18 +31,18 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.tanujamarni}}
-          password: ${{ secrets.DOCKER_HUB_TOKEN}}
+          username: ${{ secrets.DOCKER_USERNAME}}
+          password: ${{ secrets.DOCKER_PASSWORD}}
           registry: docker.io
 
       # 5️⃣ Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.tanujamarni}}/ecommerce:${{ github.sha }} .
-          docker tag ${{ secrets.tanujamarni}}/ecommerce:${{ github.sha }} ${{ secrets.tanujamarni}}/ecommerce:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME}}/ecommerce:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKER_USERNAME}}/ecommerce:${{ github.sha }} ${{ secrets.DOCKER_USERNAME}}/ecommerce:latest
 
       # 6️⃣ Push Docker image to Docker Hub
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.tanujamarni}}/ecommerce:${{ github.sha }}
-          docker push ${{ secrets.tanujamarni}}/ecommerce:latest
+          docker push ${{ secrets.DOCKER_USERNAME}}/ecommerce:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME}}/ecommerce:latest
